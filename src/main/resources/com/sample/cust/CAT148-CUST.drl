@@ -1,0 +1,92 @@
+package com.sample.cust
+ 
+import com.sample.cnb.modele.ElementDate
+import java.util.Set;
+import java.math.BigDecimal;
+ 
+import java.time.LocalDate;
+
+function boolean elementEstInclusSurAnnee(ElementDate elementAvecPeriode, Integer anneeCarriere) {
+		boolean resultat = false;
+		LocalDate dateDebut = elementAvecPeriode.getDateDebut();
+		resultat = dateDebut != null && annee(dateDebut) == anneeCarriere;
+		return resultat;
+
+}
+
+function int annee(LocalDate dateOrigine) {
+		return dateOrigine.getYear();
+    }
+
+rule "ElementCarriereDate Test"
+    when
+    	
+    	$annee : Integer();
+        $elementsN : Set (size > 0) 
+		from collect (
+			ElementDate (
+				elementEstInclusSurAnnee(this, $annee)
+			)
+		)
+        
+        
+        $elementsN1 : Set (size > 0) 
+		from collect (
+			ElementDate (
+				elementEstInclusSurAnnee(this, $annee+1)
+			)
+		)
+                
+		accumulate (	
+			ElementDate( $mois : dateDebut.monthValue, $jour : dateDebut.dayOfMonth ) from $elementsN ; 
+			$cumulMontantsN  : sum($mois + $jour) 	
+		)
+      
+		accumulate (	
+			ElementDate( $mois : dateDebut.monthValue, $jour : dateDebut.dayOfMonth ) from $elementsN1 ; 
+			$cumulMontantsN1  : sum($mois + $jour) 	
+		)
+        
+        
+       eval(($cumulMontantsN % 1000) * 1.2 < ($cumulMontantsN1 % 1000)  )
+        
+    then
+end
+
+
+rule "ElementCarriereDate Test 2"
+    when
+    	$annee : Integer();
+        $elementsN : Set (size > 0) 
+		from collect (
+			ElementDate (
+				elementEstInclusSurAnnee(this, $annee)
+			)
+		)
+        
+        
+        $elementsN1 : Set (size > 0) 
+		from collect (
+			ElementDate (
+				elementEstInclusSurAnnee(this, $annee+1)
+			)
+		)
+                
+		accumulate (	
+			ElementDate( $mois : dateDebut.monthValue, $jour : dateDebut.dayOfMonth ) from $elementsN ; 
+			$cumulMontantsN  : sum($mois + $jour) 	
+		)
+      
+		accumulate (	
+			ElementDate( $mois : dateDebut.monthValue, $jour : dateDebut.dayOfMonth ) from $elementsN1 ; 
+			$cumulMontantsN1  : sum($mois + $jour) 	
+		)
+        
+        
+       eval(($cumulMontantsN % 1000) * 0.8 > ($cumulMontantsN1 % 1000)  )
+        
+    then
+    
+end
+
+

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<kmodule xmlns="http://jboss.org/kie/6.0.0/kmodule">
+	<kbase name="rulescust" packages="com.sample.cust">
+		<ksession name="cust">
+			<listeners>
+				<ruleRuntimeEventListener type="com.sample.cnb.listener.CNBWMListener" />
+				<agendaEventListener type="com.sample.cnb.listener.CNBAgendaListener" />
+			</listeners>
+		</ksession>
+	</kbase>
+	<kbase name="rulesrh" packages="com.sample.redhat">
+		<ksession name="rdht">
+			<listeners>
+				<ruleRuntimeEventListener type="com.sample.cnb.listener.CNBWMListener" />
+				<agendaEventListener type="com.sample.cnb.listener.CNBAgendaListener" />
+			</listeners>
+		</ksession>
+	</kbase>
+	<kbase name="rulesopt" packages="com.sample.opt">
+		<ksession name="opti">
+			<listeners>
+				<ruleRuntimeEventListener type="com.sample.cnb.listener.CNBWMListener" />
+				<agendaEventListener type="com.sample.cnb.listener.CNBAgendaListener" />
+			</listeners>
+		</ksession>
+	</kbase>
+
+</kmodule>

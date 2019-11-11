@@ -1,0 +1,78 @@
+package com.sample.redhat
+ 
+import com.sample.cnb.modele.ElementDate
+import java.util.Set;
+
+rule "ElementDate RH Test SUP"
+    when
+        $annee : Integer();
+        $annee1 : Integer() from accumulate( $a : Integer( intValue == $annee), sumI($annee + 1) ) 
+        
+        $elementsN : Set (size > 0) 
+		from collect (
+			ElementDate (
+				dateDebut.year == $annee
+			)
+		)
+		
+		$elementsN1 : Set (size > 0) 
+		from collect (
+			ElementDate (
+				dateDebut.year ==  $annee1 
+			)
+		)
+		
+		accumulate (	
+			ElementDate( $mois : dateDebut.monthValue, $jour : dateDebut.dayOfMonth ) from $elementsN ; 
+			$cumulMontantsN  : sum($mois + $jour) 	
+		)
+      
+		accumulate (	
+			ElementDate( $mois : dateDebut.monthValue, $jour : dateDebut.dayOfMonth ) from $elementsN1 ; 
+			$cumulMontantsN1  : sum($mois + $jour) 	
+		)
+        
+        eval(($cumulMontantsN % 1000) * 1.2 < ($cumulMontantsN1 % 1000)  )
+        
+    then
+       //   System.out.println($annee + " "+ ($annee+1));
+    
+end
+
+
+rule "ElementDate RH Test INF"
+    when
+        $annee : Integer();
+        $annee1 : Integer() from accumulate( $a : Integer( intValue == $annee), sumI($annee + 1) ) 
+        
+        $elementsN : Set (size > 0) 
+		from collect (
+			ElementDate (
+				dateDebut.year == $annee
+			)
+		)
+		
+		$elementsN1 : Set (size > 0) 
+		from collect (
+			ElementDate (
+				dateDebut.year ==  $annee1 
+			)
+		)
+		
+		accumulate (	
+			ElementDate( $mois : dateDebut.monthValue, $jour : dateDebut.dayOfMonth ) from $elementsN ; 
+			$cumulMontantsN  : sum($mois + $jour) 	
+		)
+      
+		accumulate (	
+			ElementDate( $mois : dateDebut.monthValue, $jour : dateDebut.dayOfMonth ) from $elementsN1 ; 
+			$cumulMontantsN1  : sum($mois + $jour) 	
+		)
+        
+        eval(($cumulMontantsN % 1000) * 0.8 > ($cumulMontantsN1 % 1000)  )
+        
+    then
+      //  System.out.println($annee + " "+ ($annee+1));
+    
+end
+

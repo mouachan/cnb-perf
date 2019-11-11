@@ -1,0 +1,45 @@
+package com.sample.opt;
+ 
+import com.sample.cnb.modele.ElementDate;
+import java.util.Set;
+
+ 
+declare SumYear
+    year : Integer
+    sum : Double
+end
+
+
+
+rule "ElementDate OPT Test"
+salience 10
+    when
+        $annee : Integer(); 
+        $total : Double(doubleValue > 0) from accumulate(
+        	ElementDate( $mois : dateDebut.monthValue, $jour : dateDebut.dayOfMonth, dateDebut.year == $annee),
+         	sum( $mois + $jour) ) 
+   
+    then
+    	SumYear $fact = new SumYear();
+    	$fact.setYear($annee);
+    	$fact.setSum($total);
+		insertLogical($fact) ;
+        //System.out.println("annee "+$annee+" total "+$total);
+end
+
+rule "ElementDate OPT Test SUP"
+    when
+    	$sumyear : SumYear(this!=null)
+    	$sumyearafter : SumYear(year == ($sumyear.year + 1), ($sumyear.sum % 1000) * 1.2 < (this.sum % 1000))
+    then
+        //System.out.println("ElementDate OPT Test Sup "+$sumyearafter);
+
+end
+
+rule "ElementDate OPT Test INF"
+    when
+    	$sumyear : SumYear()
+    	$sumyearafter : SumYear(year == ($sumyear.year + 1), ($sumyear.sum % 1000) * 0.8 > (this.sum % 1000))
+    then 
+        //System.out.println("ElementDate OPT Test INF "+$sumyearafter);
+end
